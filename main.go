@@ -18,5 +18,9 @@ func main() {
     router := gin.Default()
     
     router.GET("grocery", grocery.GetAllGroceries)
+    router.GET("grocery/:id", grocery.GetGrocery)
+    router.POST("grocery", grocery.PostGrocery)
+    router.PUT("grocery/:id", grocery.UpdateGrocery)
+    router.DELETE("grocery/:id", grocery.DeleteGrocery)
     log.Fatal(router.Run(":4444"))
 }
