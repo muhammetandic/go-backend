@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
+
 	"github.com/gin-gonic/gin"
-	"github.com/muhammetandic/go-backend/main/model"
 	"github.com/muhammetandic/go-backend/main/grocery"
+	"github.com/muhammetandic/go-backend/main/model"
+	"github.com/muhammetandic/go-backend/main/todo"
 )
 
 func main() {
@@ -17,10 +19,19 @@ func main() {
     
     router := gin.Default()
     
-    router.GET("grocery", grocery.GetAllGroceries)
-    router.GET("grocery/:id", grocery.GetGrocery)
-    router.POST("grocery", grocery.PostGrocery)
-    router.PUT("grocery/:id", grocery.UpdateGrocery)
-    router.DELETE("grocery/:id", grocery.DeleteGrocery)
+    groceries := router.Group("grocery")
+    
+    groceries.GET("", grocery.GetAllGroceries)
+    groceries.GET("/:id", grocery.GetGrocery)
+    groceries.POST("", grocery.PostGrocery)
+    groceries.PUT("/:id", grocery.UpdateGrocery)
+    groceries.DELETE("/:id", grocery.DeleteGrocery)
+    
+    todos := router.Group("todo")
+    todos.GET("", todo.GetAllTodos)
+    todos.GET("/:id", todo.GetTodo)
+    todos.POST("", todo.PostTodo)
+    todos.PUT("/:id", todo.UpdateTodo)
+    todos.DELETE("/:id", todo.DeleteTodo)
     log.Fatal(router.Run(":4444"))
 }

@@ -9,7 +9,7 @@ import (
 
 type NewGrocery struct {
     Name string `json:"name" binding:"required"`
-    Quantity int `json:"quantity" binding:required""`
+    Quantity int `json:"quantity" binding:"required"`
 }
 
 type UpdatedGrocery struct {

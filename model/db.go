@@ -13,7 +13,7 @@ func DbInit() (*gorm.DB, error) {
         log.Fatal(error.Error())
     }
     
-    if error = db.AutoMigrate(&Grocery{}); error != nil {
+    if error = db.AutoMigrate(&Grocery{}, &Todo{}); error != nil {
         log.Println(error)
     }
     
