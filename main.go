@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/muhammetandic/go-backend/main/api"
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/services"
 )
@@ -32,5 +33,7 @@ func main() {
 	todos.POST("", services.PostTodo)
 	todos.PUT("/:id", services.UpdateTodo)
 	todos.DELETE("/:id", services.DeleteTodo)
+
+	api.Routes(router)
 	log.Fatal(router.Run(":4444"))
 }
