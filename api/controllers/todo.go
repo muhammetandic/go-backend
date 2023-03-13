@@ -7,15 +7,15 @@ import (
 )
 
 func GetAll(c *gin.Context) {
-	c.JSON(http.StatusOK, todos)
+//	c.JSON(http.StatusOK, todos)
 }
 
 func Get(c *gin.Context) {
-	c.JSON(http.StatusOK, todo)
+//	c.JSON(http.StatusOK, todo)
 }
 
 func Post(c *gin.Context) {
-	c.JSON(http.StatusCreated, todo)
+//	c.JSON(http.StatusCreated, todo)
 }
 
 func Put(c *gin.Context) {
