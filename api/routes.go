@@ -7,14 +7,19 @@ import (
 )
 
 func Routes(router *gin.Engine) {
-	todos := router.Group("todos")
+	auth := router.Group("auth")
+	auth.POST("login", controllers.Login)
+	auth.POST("register", controllers.Register)
+	
+	api := router.Group("api")
+	
+	todos := api.Group("todos")
 	todos.GET("", services.GetAllTodos)
 	todos.GET("/:id", services.GetTodo)
 	todos.POST("", services.PostTodo)
 
-	auth := router.Group("auth")
-	auth.POST("login", controllers.Login)
-	auth.POST("register")
+	user := api.Group("users")
+	user.POST("", controllers.PostUser)
 
 	return
 }

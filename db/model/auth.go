@@ -1,12 +1,12 @@
 package model
 
 type Auth struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Email string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
 }
 
 type Register struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	FullName string `json:"fullname"`
+	Email string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+	FullName string `json:"fullname" binding:"required"`
 }
