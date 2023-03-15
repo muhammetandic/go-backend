@@ -14,7 +14,7 @@ func Login(info model.Auth) error {
 	db, err := db.Connect()
 	if err != nil {
 		log.Println(err.Error())
-		return fmt.Errorf("Couldn't connect database")
+		return fmt.Errorf("couldn't connect database")
 	}
 
 	if err := db.Where("username= ? AND password= ?", info.Email, info.Password).First(&user).Error; err != nil {
@@ -26,16 +26,16 @@ func Login(info model.Auth) error {
 
 func Register(info model.Register) error {
 	newUser := model.User{Email: info.Email, Fullname: info.FullName, Password: info.Password}
-	
+
 	db, err := db.Connect()
 	if err != nil {
 		log.Println(err.Error())
-		return fmt.Errorf("Couldn't connect database.")
+		return fmt.Errorf("couldn't connect database")
 	}
 
 	if err := db.Create(&newUser).Error; err != nil {
 		log.Println(err.Error())
-		return fmt.Errorf("Couldn't create user.")
+		return fmt.Errorf("couldn't create user")
 	}
 
 	return nil

@@ -10,9 +10,9 @@ func Routes(router *gin.Engine) {
 	auth := router.Group("auth")
 	auth.POST("login", controllers.Login)
 	auth.POST("register", controllers.Register)
-	
+
 	api := router.Group("api")
-	
+
 	todos := api.Group("todos")
 	todos.GET("", services.GetAllTodos)
 	todos.GET("/:id", services.GetTodo)
@@ -20,6 +20,4 @@ func Routes(router *gin.Engine) {
 
 	user := api.Group("users")
 	user.POST("", controllers.PostUser)
-
-	return
 }
