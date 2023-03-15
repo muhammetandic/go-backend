@@ -17,7 +17,7 @@ func Login(info model.Auth) error {
 		return fmt.Errorf("couldn't connect database")
 	}
 
-	if err := db.Where("username= ? AND password= ?", info.Email, info.Password).First(&user).Error; err != nil {
+	if err := db.Where("email= ? AND password= ?", info.Email, info.Password).First(&user).Error; err != nil {
 		return fmt.Errorf("login incorrect")
 	}
 

@@ -33,7 +33,7 @@ func Register(c *gin.Context) {
 	}
 
 	if err := services.Register(register); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 

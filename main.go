@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhammetandic/go-backend/main/api"
 	"github.com/muhammetandic/go-backend/main/db"
-	"github.com/muhammetandic/go-backend/main/services"
 )
 
 func main() {
@@ -18,21 +17,6 @@ func main() {
 	db.DB()
 
 	router := gin.Default()
-
-	groceries := router.Group("grocery")
-
-	groceries.GET("", services.GetAllGroceries)
-	groceries.GET("/:id", services.GetGrocery)
-	groceries.POST("", services.PostGrocery)
-	groceries.PUT("/:id", services.UpdateGrocery)
-	groceries.DELETE("/:id", services.DeleteGrocery)
-
-	todos := router.Group("todo")
-	todos.GET("", services.GetAllTodos)
-	todos.GET("/:id", services.GetTodo)
-	todos.POST("", services.PostTodo)
-	todos.PUT("/:id", services.UpdateTodo)
-	todos.DELETE("/:id", services.DeleteTodo)
 
 	api.Routes(router)
 	log.Fatal(router.Run(":4444"))
