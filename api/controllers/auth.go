@@ -16,12 +16,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	if err := services.Login(auth); err != nil {
+	token, err := services.Login(auth)
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "login successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "login successfully", "token": token})
 }
 
 func Register(c *gin.Context) {

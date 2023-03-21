@@ -6,22 +6,28 @@ import (
 
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
+	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
 )
 
-func Login(info model.Auth) error {
+func Login(info model.Auth) (string, error) {
 	var user model.User
 
 	db, err := db.Connect()
 	if err != nil {
 		log.Println(err.Error())
-		return fmt.Errorf("couldn't connect database")
+		return "", fmt.Errorf("couldn't connect database")
 	}
 
 	if err := db.Where("email= ? AND password= ?", info.Email, info.Password).First(&user).Error; err != nil {
-		return fmt.Errorf("login incorrect")
+		return "", fmt.Errorf("login incorrect")
 	}
 
-	return nil
+	token, err := jwtAuth.GenerateToken(info.Email)
+	if err != nil {
+		return "", fmt.Errorf("internal server error")
+	}
+
+	return token, nil
 }
 
 func Register(info model.Register) error {
