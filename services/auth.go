@@ -18,8 +18,14 @@ func Login(info model.Auth) (string, error) {
 		return "", fmt.Errorf("couldn't connect database")
 	}
 
-	if err := db.Where("email= ? AND password= ?", info.Email, info.Password).First(&user).Error; err != nil {
-		return "", fmt.Errorf("login incorrect")
+	userRecord := db.Where("email= ?", info.Email).First(&user)
+	if userRecord.Error != nil {
+		return "", fmt.Errorf("user not found")
+	}
+
+	passwordError := user.CheckPassword(info.Password)
+	if passwordError != nil {
+		return "", fmt.Errorf("password incorrect")
 	}
 
 	token, err := jwtAuth.GenerateToken(info.Email)
@@ -37,6 +43,11 @@ func Register(info model.Register) error {
 	if err != nil {
 		log.Println(err.Error())
 		return fmt.Errorf("couldn't connect database")
+	}
+
+	if err := newUser.HashPassword(newUser.Password); err != nil {
+		log.Println(err.Error())
+		return fmt.Errorf("password couldn't hashed")
 	}
 
 	if err := db.Create(&newUser).Error; err != nil {
