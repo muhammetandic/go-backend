@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,12 +23,7 @@ type UpdatedTodo struct {
 func GetAllTodos(c *gin.Context) {
 	var todos []model.Todo
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error = db.Find(&todos).Error; error != nil {
+	if error := db.Instance.Find(&todos).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": error.Error()})
 		return
 	}
@@ -40,12 +34,7 @@ func GetAllTodos(c *gin.Context) {
 func GetTodo(c *gin.Context) {
 	var todo model.Todo
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error = db.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
+	if error := db.Instance.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Todo not found!"})
 		return
 	}
@@ -62,12 +51,7 @@ func PostTodo(c *gin.Context) {
 
 	newTodo := model.Todo{Todo: todo.Todo, IsCompleted: todo.IsCompleted, Description: todo.Description}
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Create(&newTodo).Error; error != nil {
+	if error := db.Instance.Create(&newTodo).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 	}
 
@@ -77,12 +61,7 @@ func PostTodo(c *gin.Context) {
 func UpdateTodo(c *gin.Context) {
 	var todo model.Todo
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
+	if error := db.Instance.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": error.Error()})
 		return
 	}
@@ -94,7 +73,7 @@ func UpdateTodo(c *gin.Context) {
 		return
 	}
 
-	if error := db.Model(&todo).Updates(model.Todo{Todo: updateTodo.Todo, IsCompleted: updateTodo.IsCompleted, Description: updateTodo.Description}).Error; error != nil {
+	if error := db.Instance.Model(&todo).Updates(model.Todo{Todo: updateTodo.Todo, IsCompleted: updateTodo.IsCompleted, Description: updateTodo.Description}).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		return
 	}
@@ -104,17 +83,12 @@ func UpdateTodo(c *gin.Context) {
 func DeleteTodo(c *gin.Context) {
 	var todo model.Todo
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
+	if error := db.Instance.Where("id= ?", c.Param("id")).First(&todo).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": error.Error()})
 		return
 	}
 
-	if error := db.Delete(&todo).Error; error != nil {
+	if error := db.Instance.Delete(&todo).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		return
 	}

@@ -8,16 +8,23 @@ import (
 	"gorm.io/gorm"
 )
 
-func Connect() (*gorm.DB, error) {
-	db, error := gorm.Open(sqlite.Open("./antpos.db"), &gorm.Config{})
+var (
+	Instance *gorm.DB
+	dbError  error
+)
 
-	if error != nil {
-		log.Fatal(error.Error())
+func Connect() {
+	Instance, dbError = gorm.Open(sqlite.Open("./antpos.db"), &gorm.Config{})
+
+	if dbError != nil {
+		log.Fatal(dbError)
+		panic("cannot connect to DB")
 	}
 
-	if error = db.AutoMigrate(&model.Grocery{}, &model.Todo{}, &model.User{}); error != nil {
-		log.Println(error)
-	}
+	log.Println("connected to DB")
+}
 
-	return db, error
+func Migrate() {
+	Instance.AutoMigrate(&model.Grocery{}, &model.Todo{}, &model.User{})
+	log.Println("database migration completed")
 }

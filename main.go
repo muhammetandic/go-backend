@@ -9,14 +9,10 @@ import (
 )
 
 func main() {
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
+	db.Connect()
+	db.Migrate()
 
-	db.DB()
-
-	router := gin.Default()
+	router := gin.New()
 
 	api.Routes(router)
 	log.Fatal(router.Run(":4444"))

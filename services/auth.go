@@ -12,13 +12,7 @@ import (
 func Login(info model.Auth) (string, error) {
 	var user model.User
 
-	db, err := db.Connect()
-	if err != nil {
-		log.Println(err.Error())
-		return "", fmt.Errorf("couldn't connect database")
-	}
-
-	userRecord := db.Where("email= ?", info.Email).First(&user)
+	userRecord := db.Instance.Where("email= ?", info.Email).First(&user)
 	if userRecord.Error != nil {
 		return "", fmt.Errorf("user not found")
 	}
@@ -39,18 +33,12 @@ func Login(info model.Auth) (string, error) {
 func Register(info model.Register) error {
 	newUser := model.User{Email: info.Email, Fullname: info.FullName, Password: info.Password}
 
-	db, err := db.Connect()
-	if err != nil {
-		log.Println(err.Error())
-		return fmt.Errorf("couldn't connect database")
-	}
-
 	if err := newUser.HashPassword(newUser.Password); err != nil {
 		log.Println(err.Error())
 		return fmt.Errorf("password couldn't hashed")
 	}
 
-	if err := db.Create(&newUser).Error; err != nil {
+	if err := db.Instance.Create(&newUser).Error; err != nil {
 		log.Println(err.Error())
 		return fmt.Errorf("couldn't create user")
 	}

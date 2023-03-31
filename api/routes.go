@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/muhammetandic/go-backend/main/api/controllers"
+	"github.com/muhammetandic/go-backend/main/middleware"
 	"github.com/muhammetandic/go-backend/main/services"
 )
 
@@ -14,7 +15,7 @@ func Routes(router *gin.Engine) {
 	api := router.Group("api")
 
 	todos := api.Group("todos")
-	todos.GET("", services.GetAllTodos)
+	todos.GET("", middleware.Authorize, services.GetAllTodos)
 	todos.GET("/:id", services.GetTodo)
 	todos.POST("", services.PostTodo)
 

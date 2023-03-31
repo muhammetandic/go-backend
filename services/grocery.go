@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,12 +20,8 @@ type UpdatedGrocery struct {
 
 func GetAllGroceries(c *gin.Context) {
 	var groceries []model.Grocery
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
 
-	if error = db.Find(&groceries).Error; error != nil {
+	if error := db.Instance.Find(&groceries).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": error.Error()})
 		return
 	}
@@ -37,13 +32,7 @@ func GetAllGroceries(c *gin.Context) {
 func GetGrocery(c *gin.Context) {
 	var grocery model.Grocery
 
-	db, error := db.Connect()
-
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Where("id= ?", c.Param("id")).First(&grocery).Error; error != nil {
+	if error := db.Instance.Where("id= ?", c.Param("id")).First(&grocery).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Grocery not found!"})
 		return
 	}
@@ -60,12 +49,7 @@ func PostGrocery(c *gin.Context) {
 
 	newGrocery := model.Grocery{Name: grocery.Name, Quantity: grocery.Quantity}
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Create(&newGrocery).Error; error != nil {
+	if error := db.Instance.Create(&newGrocery).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 	}
 
@@ -73,15 +57,9 @@ func PostGrocery(c *gin.Context) {
 }
 
 func UpdateGrocery(c *gin.Context) {
-
 	var grocery model.Grocery
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Where("id = ?", c.Param("id")).First(&grocery).Error; error != nil {
+	if error := db.Instance.Where("id = ?", c.Param("id")).First(&grocery).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Grocery not found!"})
 		return
 	}
@@ -93,7 +71,7 @@ func UpdateGrocery(c *gin.Context) {
 		return
 	}
 
-	if error := db.Model(&grocery).Updates(model.Grocery{Name: updateGrocery.Name, Quantity: updateGrocery.Quantity}).Error; error != nil {
+	if error := db.Instance.Model(&grocery).Updates(model.Grocery{Name: updateGrocery.Name, Quantity: updateGrocery.Quantity}).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		return
 	}
@@ -101,20 +79,14 @@ func UpdateGrocery(c *gin.Context) {
 }
 
 func DeleteGrocery(c *gin.Context) {
-
 	var grocery model.Grocery
 
-	db, error := db.Connect()
-	if error != nil {
-		log.Println(error)
-	}
-
-	if error := db.Where("id = ?", c.Param("id")).First(&grocery).Error; error != nil {
+	if error := db.Instance.Where("id = ?", c.Param("id")).First(&grocery).Error; error != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Grocery not found!"})
 		return
 	}
 
-	if error := db.Delete(&grocery).Error; error != nil {
+	if error := db.Instance.Delete(&grocery).Error; error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": error.Error()})
 		return
 	}
