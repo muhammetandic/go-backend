@@ -4,29 +4,30 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/muhammetandic/go-backend/main/db/model"
+
+	"github.com/muhammetandic/go-backend/main/core/models"
 	"github.com/muhammetandic/go-backend/main/services"
 )
 
 func Login(c *gin.Context) {
-	var auth model.Auth
+	var auth models.Auth
 
 	if err := c.ShouldBindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	token, err := services.Login(auth)
+	response, err := services.Login(auth)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "login successfully", "token": token})
+	c.JSON(http.StatusOK, response)
 }
 
 func Register(c *gin.Context) {
-	var register model.Register
+	var register models.Register
 
 	if err := c.ShouldBindJSON(&register); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

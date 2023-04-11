@@ -5,6 +5,8 @@ import (
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
+
+	"github.com/muhammetandic/go-backend/main/core/models"
 )
 
 type UserDetails struct {
@@ -17,7 +19,10 @@ type UserDetails struct {
 
 var secretKey = []byte("DenemeJWTAnahtarı")
 
-func GenerateTokens(username string) (string, string, error) {
+func GenerateTokens(username string) (*models.LoginResponse, error) {
+	login := &models.LoginResponse{}
+	login.Username = username
+
 	claims := &UserDetails{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -37,13 +42,18 @@ func GenerateTokens(username string) (string, string, error) {
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(secretKey)
 	if err != nil {
 		message := fmt.Errorf("something went wrong: %s", err.Error())
-		return "", "", message
+		return nil, message
 	}
 
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString(secretKey)
 	if err != nil {
 		message := fmt.Errorf("something went wrong: %s", err.Error())
-		return "", "", message
+		return nil, message
 	}
-	return token, refreshToken, nil
+
+	login.AccessToken = token
+	login.AccessTokenExpiresAt = claims.ExpiresAt.Time
+	login.RefreshToken = refreshToken
+	login.RefreshTokenExpiresAt = refreshClaims.ExpiresAt.Time
+	return login, nil
 }

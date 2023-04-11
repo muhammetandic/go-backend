@@ -4,34 +4,35 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/muhammetandic/go-backend/main/core/models"
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
 )
 
-func Login(info model.Auth) (string, error) {
+func Login(info models.Auth) (*models.LoginResponse, error) {
 	var user model.User
 
-	userRecord := db.Instance.Where("email= ?", info.Email).First(&user)
+	userRecord := db.Instance.Where("email= ?", info.Username).First(&user)
 	if userRecord.Error != nil {
-		return "", fmt.Errorf("user not found")
+		return nil, fmt.Errorf("user not found")
 	}
 
 	passwordError := user.CheckPassword(info.Password)
 	if passwordError != nil {
-		return "", fmt.Errorf("password incorrect")
+		return nil, fmt.Errorf("password incorrect")
 	}
 
-	token, err := jwtAuth.GenerateToken(info.Email)
+	response, err := jwtAuth.GenerateTokens(info.Username)
 	if err != nil {
-		return "", fmt.Errorf("internal server error")
+		return nil, fmt.Errorf("internal server error")
 	}
 
-	return token, nil
+	return response, nil
 }
 
-func Register(info model.Register) error {
-	newUser := model.User{Email: info.Email, Fullname: info.FullName, Password: info.Password}
+func Register(info models.Register) error {
+	newUser := model.User{Email: info.Username, Fullname: info.FullName, Password: info.Password}
 
 	if err := newUser.HashPassword(newUser.Password); err != nil {
 		log.Println(err.Error())
