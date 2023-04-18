@@ -15,8 +15,8 @@ type Register struct {
 
 type LoginResponse struct {
 	Username              string    `json:"username"`
-	AccessToken           string    `json:"accesoken"`
-	AccessTokenExpiresAt  time.Time `json:"accessTokedExpiresAt"`
+	AccessToken           string    `json:"accessToken"`
+	AccessTokenExpiresAt  time.Time `json:"accessTokenExpiresAt"`
 	RefreshToken          string    `json:"refreshToken"`
-	RefreshTokenExpiresAt time.Time `json:"refrechTokenExpiresAt"`
+	RefreshTokenExpiresAt time.Time `json:"refreshTokenExpiresAt"`
 }
