@@ -2,9 +2,9 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"github.com/muhammetandic/go-backend/main/api/controllers"
-	"github.com/muhammetandic/go-backend/main/middleware"
-	"github.com/muhammetandic/go-backend/main/services"
+	"github.com/muhammetandic/go-backend/main/utils/middleware"
 )
 
 func Routes(router *gin.Engine) {
@@ -14,10 +14,10 @@ func Routes(router *gin.Engine) {
 
 	api := router.Group("api")
 
-	todos := api.Group("todos")
-	todos.GET("", middleware.Authorize, services.GetAllTodos)
-	todos.GET("/:id", services.GetTodo)
-	todos.POST("", services.PostTodo)
+	todos := api.Group("todos", middleware.Authorize)
+	todos.GET("", controllers.GetAllTodos)
+	todos.GET("/:id", controllers.GetTodo)
+	todos.POST("", controllers.PostTodo)
 
 	user := api.Group("users")
 	user.POST("", controllers.PostUser)

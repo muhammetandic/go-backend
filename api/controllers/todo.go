@@ -4,18 +4,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/muhammetandic/go-backend/main/services"
+	"github.com/muhammetandic/go-backend/main/utils/helpers"
 )
 
-func GetAll(c *gin.Context) {
-//	c.JSON(http.StatusOK, todos)
+func GetAllTodos(c *gin.Context) {
+	data, err := services.GetAllTodos()
+	if err != nil {
+		errResponse := helpers.StatusInternalServerError(err.Error())
+		c.JSON(http.StatusInternalServerError, errResponse)
+	}
+	c.JSON(http.StatusOK, data)
 }
 
-func Get(c *gin.Context) {
-//	c.JSON(http.StatusOK, todo)
+func GetTodo(c *gin.Context) {
+	// c.JSON(http.StatusOK, todo)
 }
 
-func Post(c *gin.Context) {
-//	c.JSON(http.StatusCreated, todo)
+func PostTodo(c *gin.Context) {
+	// c.JSON(http.StatusCreated, todo)
 }
 
 func Put(c *gin.Context) {

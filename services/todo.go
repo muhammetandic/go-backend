@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
 )
@@ -20,15 +21,14 @@ type UpdatedTodo struct {
 	Description string `json:"description"`
 }
 
-func GetAllTodos(c *gin.Context) {
+func GetAllTodos() ([]model.Todo, error) {
 	var todos []model.Todo
 
-	if error := db.Instance.Find(&todos).Error; error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": error.Error()})
-		return
+	err := db.Instance.Find(&todos).Error
+	if err != nil {
+		return nil, err
 	}
-
-	c.JSON(http.StatusOK, todos)
+	return todos, nil
 }
 
 func GetTodo(c *gin.Context) {

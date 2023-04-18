@@ -1,6 +1,7 @@
 package jwtAuth
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -26,16 +27,18 @@ func GenerateTokens(username string) (*models.LoginResponse, error) {
 	claims := &UserDetails{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "antpos",
 			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(time.Minute * 30)),
-			Subject:   "antpos",
+			Subject:   "auth",
 		},
 	}
 
 	refreshClaims := &UserDetails{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
+			Issuer:    "antpos",
 			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(time.Hour * 24 * 180)),
-			Subject:   "antpos",
+			Subject:   "auth",
 		},
 	}
 
@@ -56,4 +59,27 @@ func GenerateTokens(username string) (*models.LoginResponse, error) {
 	login.RefreshToken = refreshToken
 	login.RefreshTokenExpiresAt = refreshClaims.ExpiresAt.Time
 	return login, nil
+}
+
+func ValidateToken(signedToken string) (*UserDetails, error) {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&UserDetails{},
+		func(t *jwt.Token) (interface{}, error) {
+			return []byte(secretKey), nil
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := token.Claims.(*UserDetails)
+	if !ok {
+		err = errors.New("coludn't parse claims")
+		return nil, err
+	}
+	if claims.ExpiresAt.Before(time.Now().Local()) {
+		err = errors.New("token expired")
+		return nil, err
+	}
+	return claims, nil
 }
