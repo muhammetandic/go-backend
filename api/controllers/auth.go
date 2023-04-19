@@ -44,3 +44,20 @@ func Register(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
+
+func RefreshToken(c *gin.Context) {
+	var token models.RefreshToken
+
+	if err := c.ShouldBindJSON(&token); err != nil {
+		errResponse := helpers.StatusUnvalidated(err.Error())
+		c.JSON(http.StatusBadRequest, errResponse)
+		return
+	}
+
+	tokens, errResponse := services.RefreshToken(token.RefreshToken)
+	if errResponse != nil {
+		c.JSON(http.StatusUnauthorized, errResponse)
+		return
+	}
+	c.JSON(http.StatusOK, tokens)
+}

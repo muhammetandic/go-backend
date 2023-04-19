@@ -20,3 +20,7 @@ type LoginResponse struct {
 	RefreshToken          string    `json:"refreshToken"`
 	RefreshTokenExpiresAt time.Time `json:"refreshTokenExpiresAt"`
 }
+
+type RefreshToken struct {
+	RefreshToken string `json:"refreshToken" binding:"required"`
+}

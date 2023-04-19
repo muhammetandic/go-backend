@@ -74,7 +74,7 @@ func ValidateToken(signedToken string) (*UserDetails, error) {
 	}
 	claims, ok := token.Claims.(*UserDetails)
 	if !ok {
-		err = errors.New("coludn't parse claims")
+		err = errors.New("couldn't parse claims")
 		return nil, err
 	}
 	if claims.ExpiresAt.Before(time.Now().Local()) {

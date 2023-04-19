@@ -2,6 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/muhammetandic/go-backend/main/api/controllers"
 	"github.com/muhammetandic/go-backend/main/utils/middleware"
@@ -11,6 +13,7 @@ func Routes(router *gin.Engine) {
 	auth := router.Group("auth")
 	auth.POST("login", controllers.Login)
 	auth.POST("register", controllers.Register)
+	auth.POST("refresh-token", controllers.RefreshToken)
 
 	api := router.Group("api")
 
@@ -21,4 +24,6 @@ func Routes(router *gin.Engine) {
 
 	user := api.Group("users")
 	user.POST("", controllers.PostUser)
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

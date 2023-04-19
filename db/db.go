@@ -3,9 +3,10 @@ package db
 import (
 	"log"
 
-	"github.com/muhammetandic/go-backend/main/db/model"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+
+	"github.com/muhammetandic/go-backend/main/db/model"
 )
 
 var (
@@ -25,6 +26,9 @@ func Connect() {
 }
 
 func Migrate() {
-	Instance.AutoMigrate(&model.Grocery{}, &model.Todo{}, &model.User{})
+	err := Instance.AutoMigrate(&model.Grocery{}, &model.Todo{}, &model.User{})
+	if err != nil {
+		log.Println("database migration is failed")
+	}
 	log.Println("database migration completed")
 }

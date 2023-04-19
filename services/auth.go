@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"log"
 
 	"github.com/muhammetandic/go-backend/main/core/models"
@@ -11,10 +12,12 @@ import (
 )
 
 func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
-	var user model.User
+	ctx := context.Background()
+	userRepo := User()
 
-	userRecord := db.Instance.Where("email= ?", info.Username).First(&user)
-	if userRecord.Error != nil {
+	user := userRepo.Get(&model.User{Email: info.Username}, ctx)
+
+	if user == nil {
 		errResponse := helpers.StatusUnauthenticated("user not found")
 		return nil, &errResponse
 	}
@@ -26,6 +29,14 @@ func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
 	}
 
 	response, err := jwtAuth.GenerateTokens(info.Username)
+	if err != nil {
+		log.Println(err.Error())
+		errResponse := helpers.StatusInternalServerError(err.Error())
+		return nil, &errResponse
+	}
+
+	user.RefreshToken = response.RefreshToken
+	err = userRepo.Update(user, ctx)
 	if err != nil {
 		log.Println(err.Error())
 		errResponse := helpers.StatusInternalServerError(err.Error())
@@ -51,4 +62,41 @@ func Register(info models.Register) *models.ErrorResponse {
 	}
 
 	return nil
+}
+
+func RefreshToken(token string) (*models.LoginResponse, *models.ErrorResponse) {
+	ctx := context.Background()
+	userRepo := User()
+
+	jwtUser, err := jwtAuth.ValidateToken(token)
+	if err != nil {
+		errResponse := helpers.StatusUnvalidated(err.Error())
+		return nil, &errResponse
+	}
+	user := userRepo.Get(&model.User{Email: jwtUser.Username}, ctx)
+	if user == nil {
+		errResponse := helpers.StatusUnauthenticated("user not found")
+		return nil, &errResponse
+	}
+
+	if user.RefreshToken != token {
+		errResponse := helpers.StatusUnauthenticated("token is invalid")
+		return nil, &errResponse
+	}
+
+	tokens, err := jwtAuth.GenerateTokens(jwtUser.Username)
+	if err != nil {
+		errResponse := helpers.StatusInternalServerError(err.Error())
+		return nil, &errResponse
+	}
+
+	user.RefreshToken = tokens.RefreshToken
+	err = userRepo.Update(user, ctx)
+	if err != nil {
+		log.Println(err.Error())
+		errResponse := helpers.StatusInternalServerError(err.Error())
+		return nil, &errResponse
+	}
+
+	return tokens, nil
 }

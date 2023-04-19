@@ -1,0 +1,17 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "AntPos Basic Pos App API Project",
+        "title": "AntPos API",
+        "contact": {
+            "name": "Muhammet Andiç",
+            "email": "muhammetandic@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "paths": {}
+}
