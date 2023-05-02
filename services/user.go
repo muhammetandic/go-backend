@@ -6,7 +6,8 @@ import (
 	"github.com/muhammetandic/go-backend/main/db/repository"
 )
 
-func User() *repository.Repository[model.User] {
-	repo := repository.NewRepository[model.User](db.Instance)
-	return repo
+func UserService() *Service[model.User] {
+	userRepo := repository.NewRepository[model.User](db.Instance)
+	service := NewService(userRepo)
+	return service
 }

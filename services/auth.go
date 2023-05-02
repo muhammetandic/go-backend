@@ -7,13 +7,14 @@ import (
 	"github.com/muhammetandic/go-backend/main/core/models"
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
+	"github.com/muhammetandic/go-backend/main/db/repository"
 	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
 	"github.com/muhammetandic/go-backend/main/utils/helpers"
 )
 
 func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
 	ctx := context.Background()
-	userRepo := User()
+	userRepo := repository.UserRepo(db.Instance)
 
 	user := userRepo.Get(&model.User{Email: info.Username}, ctx)
 
@@ -66,7 +67,7 @@ func Register(info models.Register) *models.ErrorResponse {
 
 func RefreshToken(token string) (*models.LoginResponse, *models.ErrorResponse) {
 	ctx := context.Background()
-	userRepo := User()
+	userRepo := repository.UserRepo(db.Instance)
 
 	jwtUser, err := jwtAuth.ValidateToken(token)
 	if err != nil {
