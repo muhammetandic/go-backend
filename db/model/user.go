@@ -2,15 +2,19 @@ package model
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	Email        string `json:"email" gorm:"unique; size: 100"`
-	Password     string `json:"password" gorm:"size:100"`
-	Fullname     string `json:"fullname" gorm:"size:200"`
+	Model
+	Email        string `json:"email" gorm:"unique; size:100" binding:"required"`
+	Password     string `json:"password" gorm:"size:100" binding:"required"`
+	Fullname     string `json:"fullname" gorm:"size:200" binding:"required"`
 	RefreshToken string `json:"refreshToken"`
+}
+
+type UserDto struct {
+	Email    string `json:"email" binding:"required"`
+	Fullname string `json:"fullname" binding:"required"`
 }
 
 func (user *User) HashPassword(password string) error {

@@ -1,10 +1,14 @@
 package model
 
-import "gorm.io/gorm"
-
 type Todo struct {
-	gorm.Model
-	Todo        string `json:"todo"`
-	IsCompleted bool   `json:"isCompleted"`
+	Model
+	Task        string `json:"task" binding:"required"`
+	IsCompleted *bool  `json:"isCompleted" binding:"required"`
+	Description string `json:"description"`
+}
+
+type TodoDto struct {
+	Task        string `json:"task" binding:"required"`
+	IsCompleted *bool  `json:"isCompleted" binding:"required"`
 	Description string `json:"description"`
 }

@@ -18,13 +18,18 @@ func Routes(router *gin.Engine) {
 	api := router.Group("api")
 
 	todos := api.Group("todos", middleware.Authorize)
+	todos.POST("", controllers.CreateTodo)
 	todos.GET("", controllers.GetAllTodos)
 	todos.GET("/:id", controllers.GetTodo)
-	todos.POST("", controllers.PostTodo)
+	todos.PUT("/:id", controllers.UpdateTodo)
+	todos.DELETE("/:id", controllers.DeleteTodo)
 
 	user := api.Group("users", middleware.Authorize)
-	user.POST("", controllers.PostUser)
+	user.POST("", controllers.CreateUser)
 	user.GET("", controllers.GetAllUsers)
+	user.GET("/:id", controllers.GetUser)
+	user.PUT("/:id", controllers.UpdateUser)
+	user.DELETE("/:id", controllers.DeleteUser)
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

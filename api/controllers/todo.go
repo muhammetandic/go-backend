@@ -1,35 +1,95 @@
 package controllers
 
 import (
+	"context"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/services"
-	"github.com/muhammetandic/go-backend/main/utils/helpers"
 )
 
-func GetAllTodos(c *gin.Context) {
-	data, err := services.GetAllTodos()
-	if err != nil {
-		errResponse := helpers.StatusInternalServerError(err.Error())
-		c.JSON(http.StatusInternalServerError, errResponse)
+func CreateTodo(c *gin.Context) {
+	var todoDto model.TodoDto
+	if err := c.ShouldBindJSON(&todoDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	c.JSON(http.StatusOK, data)
+
+	todoData := model.Todo{Task: todoDto.Task, IsCompleted: todoDto.IsCompleted, Description: todoDto.Description}
+
+	todoService := services.TodoService()
+	todo, err := todoService.Add(&todoData, context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, todo)
+}
+
+func GetAllTodos(c *gin.Context) {
+	todoService := services.TodoService()
+	entities, err := todoService.GetAll(context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, entities)
 }
 
 func GetTodo(c *gin.Context) {
-	// c.JSON(http.StatusOK, todo)
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	todoService := services.TodoService()
+	entity, err := todoService.Get(id, context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, entity)
 }
 
-func PostTodo(c *gin.Context) {
-	// c.JSON(http.StatusCreated, todo)
+func UpdateTodo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var todo model.Todo
+	err = c.ShouldBindJSON(&todo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	todoService := services.TodoService()
+	err = todoService.Update(id, &todo, context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, gin.H{})
 }
 
-func Put(c *gin.Context) {
-	c.JSON(http.StatusNoContent, nil)
-}
+func DeleteTodo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-func Delete(c *gin.Context) {
-	c.JSON(http.StatusNoContent, nil)
+	todoService := services.TodoService()
+	err = todoService.Delete(id, context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, gin.H{})
 }

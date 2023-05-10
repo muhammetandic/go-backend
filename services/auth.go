@@ -37,7 +37,7 @@ func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
 	}
 
 	user.RefreshToken = response.RefreshToken
-	err = userRepo.Update(user, ctx)
+	err = userRepo.Update(int(user.ID), user, ctx)
 	if err != nil {
 		log.Println(err.Error())
 		errResponse := helpers.StatusInternalServerError(err.Error())
@@ -92,7 +92,7 @@ func RefreshToken(token string) (*models.LoginResponse, *models.ErrorResponse) {
 	}
 
 	user.RefreshToken = tokens.RefreshToken
-	err = userRepo.Update(user, ctx)
+	err = userRepo.Update(int(user.ID), user, ctx)
 	if err != nil {
 		log.Println(err.Error())
 		errResponse := helpers.StatusInternalServerError(err.Error())

@@ -16,8 +16,12 @@ func NewRepository[T any](db *gorm.DB) *Repository[T] {
 	}
 }
 
-func (r *Repository[T]) Add(entity *T, ctx context.Context) error {
-	return r.db.WithContext(ctx).Create(&entity).Error
+func (r *Repository[T]) Add(entity *T, ctx context.Context) (*T, error) {
+	err := r.db.WithContext(ctx).Create(&entity).Error
+	if err != nil {
+		return nil, err
+	}
+	return entity, nil
 }
 
 func (r *Repository[T]) AddAll(entities []*T, ctx context.Context) error {
@@ -35,7 +39,7 @@ func (r *Repository[T]) GetAll(ctx context.Context) (*[]T, error) {
 
 func (r *Repository[T]) GetById(id int, ctx context.Context) (*T, error) {
 	var entity T
-	err := r.db.WithContext(ctx).Model(&entity).Where("id= ? AND is_active= ?", id, true).First(&entity).Error
+	err := r.db.WithContext(ctx).Model(&entity).Where("id = ?", id).First(&entity).Error
 	if err != nil {
 		return nil, err
 	}
@@ -60,8 +64,13 @@ func (r *Repository[T]) Where(params *T, ctx context.Context) (*[]T, error) {
 	return &entities, nil
 }
 
-func (r *Repository[T]) Update(entity *T, ctx context.Context) error {
-	return r.db.WithContext(ctx).Save(&entity).Error
+func (r *Repository[T]) Update(id int, entity *T, ctx context.Context) error {
+	var savedEntity T
+	err := r.db.WithContext(ctx).Model(&savedEntity).Where("id = ?", id).First(&savedEntity).Error
+	if err != nil {
+		return err
+	}
+	return r.db.WithContext(ctx).Model(&entity).Updates(&entity).Error
 }
 
 func (r *Repository[T]) UpdateAll(entities []*T, ctx context.Context) error {
@@ -70,9 +79,9 @@ func (r *Repository[T]) UpdateAll(entities []*T, ctx context.Context) error {
 
 func (r *Repository[T]) Delete(id int, ctx context.Context) error {
 	var entity *T
-	// err := r.db.WithContext(ctx).Model(&entity).Where("id = ? AND is_active = ?", id, true).FirstOrInit(&entity).Error
-	// if err != nil {
-	// 	return err
-	// }
-	return r.db.WithContext(ctx).First(&entity).UpdateColumn("is_active", false).Error
+	err := r.db.WithContext(ctx).First(&entity, id).Error
+	if err != nil {
+		return err
+	}
+	return r.db.WithContext(ctx).Delete(&entity).Error
 }
