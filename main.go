@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	"github.com/muhammetandic/go-backend/main/api"
@@ -25,7 +26,13 @@ func main() {
 	db.Connect()
 	db.Migrate()
 
-	router := gin.New()
+	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AddAllowMethods("OPTIONS")
+	router.Use(cors.New(config))
 
 	api.Routes(router)
 	log.Fatal(router.Run(":4444"))
