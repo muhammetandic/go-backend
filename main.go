@@ -31,6 +31,7 @@ func main() {
 	config := cors.DefaultConfig()
 	config.AllowAllOrigins = true
 	config.AllowCredentials = true
+	config.AddAllowHeaders("Authorization")
 	config.AddAllowMethods("OPTIONS")
 	router.Use(cors.New(config))
 
