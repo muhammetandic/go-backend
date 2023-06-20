@@ -26,7 +26,7 @@ func Connect() {
 }
 
 func Migrate() {
-	err := Instance.AutoMigrate(&model.Todo{}, &model.User{})
+	err := Instance.AutoMigrate(&model.Todo{}, &model.User{}, &model.Role{}, &model.UserToRole{}, &model.RolePrivilege{})
 	if err != nil {
 		log.Println("database migration is failed")
 	}
