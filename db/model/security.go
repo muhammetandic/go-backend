@@ -11,6 +11,8 @@ type UserToRole struct {
 	Model
 	UserID int `json:"userId" binding:"required"`
 	RoleID int `json:"roleId" binding:"required"`
+	Role   Role
+	User   User
 }
 
 type RolePrivilege struct {

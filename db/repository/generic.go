@@ -55,6 +55,15 @@ func (r *Repository[T]) Get(params *T, ctx context.Context) *T {
 	return &entity
 }
 
+func (r *Repository[T]) GetWithRelated(params *T, relate string, ctx context.Context) *T {
+	var entity T
+	err := r.db.Preload(relate).WithContext(ctx).Where(&params).First(&entity).Error
+	if err != nil {
+		return nil
+	}
+	return &entity
+}
+
 func (r *Repository[T]) Where(params *T, ctx context.Context) (*[]T, error) {
 	var entities []T
 	err := r.db.WithContext(ctx).Where(&params).Find(&entities).Error

@@ -45,6 +45,6 @@ func Authorize(c *gin.Context) {
 	username, _ := c.Get("username")
 	userRepo := repository.UserRepo(db.Instance)
 	uname, _ := username.(string)
-	user := userRepo.Get(&model.User{Email: uname}, ctx)
+	user := userRepo.GetWithRelated(&model.User{Email: uname}, "Roles.Role.Privileges", ctx)
 	println(user.Roles)
 }
