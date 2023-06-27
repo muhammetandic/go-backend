@@ -2,18 +2,20 @@ package model
 
 type Role struct {
 	Model
-	RoleName string `json:"roleName" binding:"required"`
+	Name       string `json:"roleName" binding:"required"`
+	Privileges []RolePrivilege
+	Users      []UserToRole
 }
 
 type UserToRole struct {
 	Model
-	UserId int `json:"userId" binding:"required"`
-	RoleId int `json:"roleId" binding:"required"`
+	UserID int `json:"userId" binding:"required"`
+	RoleID int `json:"roleId" binding:"required"`
 }
 
 type RolePrivilege struct {
 	Model
-	RoleId    int    `json:"roleId" binding:"required"`
+	RoleID    int    `json:"roleId" binding:"required"`
 	Table     string `json:"table" binding:"required"`
 	CanRead   bool   `json:"canRead" binding:"required" gorm:"default:false"`
 	CanInsert bool   `json:"canInsert" binding:"required" gorm:"default:false"`

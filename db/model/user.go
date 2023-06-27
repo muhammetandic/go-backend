@@ -10,6 +10,7 @@ type User struct {
 	Password     string `json:"password" gorm:"size:100" binding:"required"`
 	Fullname     string `json:"fullname" gorm:"size:200" binding:"required"`
 	RefreshToken string `json:"refreshToken"`
+	Roles        []UserToRole
 }
 
 type UserDto struct {

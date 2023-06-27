@@ -17,14 +17,14 @@ func Routes(router *gin.Engine) {
 
 	api := router.Group("api")
 
-	todos := api.Group("todos", middleware.Authorize)
+	todos := api.Group("todos", middleware.Authenticate, middleware.Authorize)
 	todos.POST("", controllers.CreateTodo)
 	todos.GET("", controllers.GetAllTodos)
 	todos.GET("/:id", controllers.GetTodo)
 	todos.PUT("/:id", controllers.UpdateTodo)
 	todos.DELETE("/:id", controllers.DeleteTodo)
 
-	user := api.Group("users", middleware.Authorize)
+	user := api.Group("users", middleware.Authenticate, middleware.Authorize)
 	user.POST("", controllers.CreateUser)
 	user.GET("", controllers.GetAllUsers)
 	user.GET("/:id", controllers.GetUser)

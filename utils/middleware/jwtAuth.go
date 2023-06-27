@@ -1,16 +1,20 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/muhammetandic/go-backend/main/db"
+	"github.com/muhammetandic/go-backend/main/db/model"
+	"github.com/muhammetandic/go-backend/main/db/repository"
 	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
 	"github.com/muhammetandic/go-backend/main/utils/helpers"
 )
 
-func Authorize(c *gin.Context) {
+func Authenticate(c *gin.Context) {
 	auth := c.Request.Header.Get("Authorization")
 	if auth == "" {
 		errorResponse := helpers.StatusUnauthorized("no authorization header provided")
@@ -33,7 +37,14 @@ func Authorize(c *gin.Context) {
 	}
 
 	c.Set("username", user.Username)
-	c.Set("userId", user.Uid)
-	c.Set("role", user.UserType)
 	c.Next()
+}
+
+func Authorize(c *gin.Context) {
+	ctx := context.Background()
+	username, _ := c.Get("username")
+	userRepo := repository.UserRepo(db.Instance)
+	uname, _ := username.(string)
+	user := userRepo.Get(&model.User{Email: uname}, ctx)
+	println(user.Roles)
 }

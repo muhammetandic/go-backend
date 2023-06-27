@@ -13,8 +13,6 @@ import (
 type UserDetails struct {
 	Username string `json:"username"`
 	FullName string `json:"full_name"`
-	Uid      int    `json:"uid"`
-	UserType string `json:"user_type"`
 	jwt.RegisteredClaims
 }
 
