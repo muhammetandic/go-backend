@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/exp/slices"
 
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
@@ -41,10 +42,44 @@ func Authenticate(c *gin.Context) {
 }
 
 func Authorize(c *gin.Context) {
-	ctx := context.Background()
+	method := c.Request.Method
+	path := c.FullPath()
+	path = strings.Replace(path, "/api/", "", -1)
 	username, _ := c.Get("username")
+
+	ctx := context.Background()
+
 	userRepo := repository.UserRepo(db.Instance)
 	uname, _ := username.(string)
 	user := userRepo.GetWithRelated(&model.User{Email: uname}, "Roles.Role.Privileges", ctx)
-	println(user.Roles)
+
+	canDo := CanDo(method, path, user.Roles[:])
+	if !canDo {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, helpers.StatusUnauthorized("you are not authorized to access the resource"))
+	}
+
+	c.Next()
+}
+
+func CanDo(method string, path string, roles []model.UserToRole) bool {
+	switch method {
+	case "GET":
+		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
+			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanRead
+		})
+	case "POST":
+		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
+			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanInsert
+		})
+	case "PUT":
+		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
+			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanUpdate
+		})
+	case "DELETE":
+		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
+			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanDelete
+		})
+	default:
+		return false
+	}
 }

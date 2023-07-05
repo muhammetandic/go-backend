@@ -10,6 +10,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.1
 	golang.org/x/crypto v0.10.0
+	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df
 	gorm.io/driver/sqlite v1.5.2
 	gorm.io/gorm v1.25.2
 )
