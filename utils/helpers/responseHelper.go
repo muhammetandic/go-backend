@@ -21,7 +21,7 @@ func StatusUnauthenticated(message string) models.ErrorResponse {
 	}
 }
 
-func StatusUnvalidated(message string) models.ErrorResponse {
+func StatusInvalidated(message string) models.ErrorResponse {
 	return models.ErrorResponse{
 		Code:   errors.ValidationError,
 		Status: errors.ValidationErrorStatus,
