@@ -10,5 +10,5 @@ type RoleService struct {
 }
 
 func NewRoleService() *RoleService {
-	return &RoleService{NewService[model.Role](repository.NewRoleRepo().Repository)}
+	return &RoleService{NewService[model.Role](repository.NewRoleRepo())}
 }
