@@ -31,5 +31,12 @@ func Routes(router *gin.Engine) {
 	user.PUT("/:id", controllers.UpdateUser)
 	user.DELETE("/:id", controllers.DeleteUser)
 
+	role := api.Group("roles", middleware.Authenticate, middleware.Authorize)
+	role.POST("", controllers.CreateRole)
+	role.GET("", controllers.GetAllRoles)
+	role.GET("/:id", controllers.GetRole)
+	role.PUT("/:id", controllers.UpdateRole)
+	role.DELETE("/:id", controllers.DeleteRole)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
