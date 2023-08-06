@@ -19,7 +19,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	userData := model.User{Email: userDto.Email, Fullname: userDto.Fullname}
-	userService := services.UserService()
+	userService := services.NewUserService()
 	user, err := userService.Add(&userData, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -29,7 +29,7 @@ func CreateUser(c *gin.Context) {
 }
 
 func GetAllUsers(c *gin.Context) {
-	userService := services.UserService()
+	userService := services.NewUserService()
 	entities, err := userService.GetAll(context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -45,7 +45,7 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	userService := services.UserService()
+	userService := services.NewUserService()
 	entity, err := userService.Get(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -68,7 +68,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	userService := services.UserService()
+	userService := services.NewUserService()
 	err = userService.Update(id, &user, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -84,7 +84,7 @@ func DeleteUser(c *gin.Context) {
 		return
 	}
 
-	userService := services.UserService()
+	userService := services.NewUserService()
 	err = userService.Delete(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slices"
 
-	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/db/repository"
 	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
@@ -49,7 +48,7 @@ func Authorize(c *gin.Context) {
 
 	ctx := context.Background()
 
-	userRepo := repository.UserRepo(db.Instance)
+	userRepo := repository.NewUserRepo()
 	uname, _ := username.(string)
 	user := userRepo.GetWithRelated(&model.User{Email: uname}, "Roles.Role.Privileges", ctx)
 

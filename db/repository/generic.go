@@ -6,6 +6,18 @@ import (
 	"gorm.io/gorm"
 )
 
+type IRepository[T any] interface {
+	Add(entity *T, ctx context.Context) (*T, error)
+	AddAll(entities []*T, ctx context.Context) error
+	GetAll(ctx context.Context) (*[]T, error)
+	GetById(id int, ctx context.Context) (*T, error)
+	Delete(id int, ctx context.Context) error
+	Get(params *T, ctx context.Context) *T
+	GetWithRelated(params *T, relate string, ctx context.Context) *T
+	Update(id int, entity *T, ctx context.Context) error
+	Where(params *T, ctx context.Context) (*[]T, error)
+}
+
 type Repository[T any] struct {
 	db *gorm.DB
 }

@@ -12,15 +12,13 @@ import (
 )
 
 func CreateTodo(c *gin.Context) {
-	var todoDto model.TodoDto
-	if err := c.ShouldBindJSON(&todoDto); err != nil {
+	var todoData model.Todo
+	if err := c.ShouldBindJSON(&todoData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	todoData := model.Todo{Task: todoDto.Task, IsCompleted: todoDto.IsCompleted, Description: todoDto.Description}
-
-	todoService := services.TodoService()
+	todoService := services.NewTodoService()
 	todo, err := todoService.Add(&todoData, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -30,7 +28,7 @@ func CreateTodo(c *gin.Context) {
 }
 
 func GetAllTodos(c *gin.Context) {
-	todoService := services.TodoService()
+	todoService := services.NewTodoService()
 	entities, err := todoService.GetAll(context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -46,7 +44,7 @@ func GetTodo(c *gin.Context) {
 		return
 	}
 
-	todoService := services.TodoService()
+	todoService := services.NewTodoService()
 	entity, err := todoService.Get(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -69,7 +67,7 @@ func UpdateTodo(c *gin.Context) {
 		return
 	}
 
-	todoService := services.TodoService()
+	todoService := services.NewTodoService()
 	err = todoService.Update(id, &todo, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -85,7 +83,7 @@ func DeleteTodo(c *gin.Context) {
 		return
 	}
 
-	todoService := services.TodoService()
+	todoService := services.NewTodoService()
 	err = todoService.Delete(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
