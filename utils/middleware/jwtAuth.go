@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -42,8 +43,13 @@ func Authenticate(c *gin.Context) {
 
 func Authorize(c *gin.Context) {
 	method := c.Request.Method
+
 	path := c.FullPath()
 	path = strings.Replace(path, "/api/", "", -1)
+	pattern := `\/.*`
+	regEx := regexp.MustCompile(pattern)
+	path = regEx.ReplaceAllString(path, "")
+
 	username, _ := c.Get("username")
 
 	ctx := context.Background()
