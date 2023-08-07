@@ -7,10 +7,10 @@ import (
 )
 
 type Service[T any] struct {
-	repo *repository.Repository[T]
+	repo repository.IRepository[T]
 }
 
-func NewService[T any](repo *repository.Repository[T]) *Service[T] {
+func NewService[T any](repo repository.IRepository[T]) *Service[T] {
 	return &Service[T]{
 		repo: repo,
 	}

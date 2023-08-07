@@ -6,31 +6,29 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/services"
 )
 
-func CreateUser(c *gin.Context) {
-	var userDto model.UserDto
-	if err := c.ShouldBindJSON(&userDto); err != nil {
+func CreateRole(c *gin.Context) {
+	var roleData model.Role
+	if err := c.ShouldBindJSON(&roleData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userData := model.User{Email: userDto.Email, Fullname: userDto.Fullname}
-	userService := services.NewUserService()
-	user, err := userService.Add(&userData, context.Background())
+	roleService := services.NewRoleService()
+	role, err := roleService.Add(&roleData, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, user)
+	c.JSON(http.StatusCreated, role)
 }
 
-func GetAllUsers(c *gin.Context) {
-	userService := services.NewUserService()
-	entities, err := userService.GetAll(context.Background())
+func GetAllRoles(c *gin.Context) {
+	roleService := services.NewRoleService()
+	entities, err := roleService.GetAll(context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -38,15 +36,15 @@ func GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, entities)
 }
 
-func GetUser(c *gin.Context) {
+func GetRole(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userService := services.NewUserService()
-	entity, err := userService.Get(id, context.Background())
+	roleService := services.NewRoleService()
+	entity, err := roleService.Get(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -54,41 +52,41 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, entity)
 }
 
-func UpdateUser(c *gin.Context) {
+func UpdateRole(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var user model.User
-	err = c.ShouldBindJSON(&user)
+	var role model.Role
+	err = c.ShouldBindJSON(&role)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userService := services.NewUserService()
-	err = userService.Update(id, &user, context.Background())
+	roleService := services.NewRoleService()
+	err = roleService.Update(id, &role, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusNoContent, gin.H{})
 }
 
-func DeleteUser(c *gin.Context) {
+func DeleteRole(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userService := services.NewUserService()
-	err = userService.Delete(id, context.Background())
+	roleService := services.NewRoleService()
+	err = roleService.Delete(id, context.Background())
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusNoContent, gin.H{})
 }

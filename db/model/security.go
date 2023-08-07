@@ -2,8 +2,8 @@ package model
 
 type Role struct {
 	Model
-	Name       string `json:"roleName" binding:"required"`
-	Privileges Privilege
+	Name       string    `json:"name" gorm:"unique;size:100" binding:"required"`
+	Privileges Privilege `json:"privileges"`
 	Users      []UserToRole
 }
 
@@ -17,10 +17,10 @@ type UserToRole struct {
 
 type Privilege struct {
 	Model
-	RoleID    int    `json:"roleId" binding:"required"`
+	RoleID    int    `json:"roleId"`
 	Endpoint  string `json:"endpoint" binding:"required"`
-	CanRead   bool   `json:"canRead" binding:"required" gorm:"default:false"`
-	CanInsert bool   `json:"canInsert" binding:"required" gorm:"default:false"`
-	CanUpdate bool   `json:"canUpdate" binding:"required" gorm:"default:false"`
-	CanDelete bool   `json:"CanDelete" binding:"required" gorm:"default:false"`
+	CanRead   bool   `json:"canRead" gorm:"default:false"`
+	CanInsert bool   `json:"canInsert" gorm:"default:false"`
+	CanUpdate bool   `json:"canUpdate" gorm:"default:false"`
+	CanDelete bool   `json:"canDelete" gorm:"default:false"`
 }

@@ -14,7 +14,7 @@ func Login(c *gin.Context) {
 	var auth models.Auth
 
 	if err := c.ShouldBindJSON(&auth); err != nil {
-		errResponse := helpers.StatusUnvalidated(err.Error())
+		errResponse := helpers.StatusInvalidated(err.Error())
 		c.JSON(http.StatusBadRequest, errResponse)
 		return
 	}
@@ -32,7 +32,7 @@ func Register(c *gin.Context) {
 	var register models.Register
 
 	if err := c.ShouldBindJSON(&register); err != nil {
-		errResponse := helpers.StatusUnvalidated(err.Error())
+		errResponse := helpers.StatusInvalidated(err.Error())
 		c.JSON(http.StatusBadRequest, errResponse)
 		return
 	}
@@ -49,7 +49,7 @@ func RefreshToken(c *gin.Context) {
 	var token models.RefreshToken
 
 	if err := c.ShouldBindJSON(&token); err != nil {
-		errResponse := helpers.StatusUnvalidated(err.Error())
+		errResponse := helpers.StatusInvalidated(err.Error())
 		c.JSON(http.StatusBadRequest, errResponse)
 		return
 	}

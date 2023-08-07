@@ -14,7 +14,7 @@ import (
 
 func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
 	ctx := context.Background()
-	userRepo := repository.UserRepo(db.Instance)
+	userRepo := repository.NewUserRepo()
 
 	user := userRepo.Get(&model.User{Email: info.Username}, ctx)
 
@@ -67,11 +67,11 @@ func Register(info models.Register) *models.ErrorResponse {
 
 func RefreshToken(token string) (*models.LoginResponse, *models.ErrorResponse) {
 	ctx := context.Background()
-	userRepo := repository.UserRepo(db.Instance)
+	userRepo := repository.NewUserRepo()
 
 	jwtUser, err := jwtAuth.ValidateToken(token)
 	if err != nil {
-		errResponse := helpers.StatusUnvalidated(err.Error())
+		errResponse := helpers.StatusInvalidated(err.Error())
 		return nil, &errResponse
 	}
 	user := userRepo.Get(&model.User{Email: jwtUser.Username}, ctx)

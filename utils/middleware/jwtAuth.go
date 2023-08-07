@@ -3,12 +3,12 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/slices"
 
-	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/db/repository"
 	"github.com/muhammetandic/go-backend/main/services/jwtAuth"
@@ -43,13 +43,18 @@ func Authenticate(c *gin.Context) {
 
 func Authorize(c *gin.Context) {
 	method := c.Request.Method
+
 	path := c.FullPath()
 	path = strings.Replace(path, "/api/", "", -1)
+	pattern := `\/.*`
+	regEx := regexp.MustCompile(pattern)
+	path = regEx.ReplaceAllString(path, "")
+
 	username, _ := c.Get("username")
 
 	ctx := context.Background()
 
-	userRepo := repository.UserRepo(db.Instance)
+	userRepo := repository.NewUserRepo()
 	uname, _ := username.(string)
 	user := userRepo.GetWithRelated(&model.User{Email: uname}, "Roles.Role.Privileges", ctx)
 
