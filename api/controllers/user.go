@@ -92,3 +92,33 @@ func DeleteUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusNoContent, nil)
 }
+
+func AddRole(c *gin.Context) {
+	var role model.UserToRoleDto
+	if err := c.ShouldBindJSON(&role); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	userService := services.NewUserService()
+	entity, err := userService.AddRole(&role, context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusCreated, entity)
+}
+
+func RemoveRole(c *gin.Context) {
+	var role model.UserToRoleDto
+	if err := c.ShouldBindJSON(&role); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	userService := services.NewUserService()
+	err := userService.RemoveRole(int(role.ID), context.Background())
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+}
