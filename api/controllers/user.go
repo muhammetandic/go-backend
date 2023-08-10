@@ -18,7 +18,7 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	userData := model.User{Email: userDto.Email, Fullname: userDto.Fullname}
+	userData := model.User{Email: userDto.Email, FullName: userDto.FullName}
 	userService := services.NewUserService()
 	user, err := userService.Add(&userData, context.Background())
 	if err != nil {

@@ -2,7 +2,7 @@ package model
 
 type Role struct {
 	Model
-	Name       string       `json:"name" gorm:"unique;size:100" binding:"required"`
+	Name       string       `json:"name" gorm:"uniqueIndex;size:100" binding:"required"`
 	Privileges []Privilege  `json:"privileges"`
 	Users      []UserToRole `json:"users" binding:"-"`
 }
