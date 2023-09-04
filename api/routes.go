@@ -30,6 +30,8 @@ func Routes(router *gin.Engine) {
 	user.GET("/:id", controllers.GetUser)
 	user.PUT("/:id", controllers.UpdateUser)
 	user.DELETE("/:id", controllers.DeleteUser)
+	user.POST("/add-role", controllers.AddRole)
+	user.POST("/remove-role", controllers.RemoveRole)
 
 	role := api.Group("roles", middleware.Authenticate, middleware.Authorize)
 	role.POST("", controllers.CreateRole)

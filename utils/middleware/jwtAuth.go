@@ -70,19 +70,27 @@ func CanDo(method string, path string, roles []model.UserToRole) bool {
 	switch method {
 	case "GET":
 		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanRead
+			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
+				return privilege.Endpoint == path && privilege.CanRead
+			})
 		})
 	case "POST":
 		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanInsert
+			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
+				return privilege.Endpoint == path && privilege.CanInsert
+			})
 		})
 	case "PUT":
 		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanUpdate
+			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
+				return privilege.Endpoint == path && privilege.CanUpdate
+			})
 		})
 	case "DELETE":
 		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return role.Role.Privileges.Endpoint == path && role.Role.Privileges.CanDelete
+			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
+				return privilege.Endpoint == path && privilege.CanDelete
+			})
 		})
 	default:
 		return false

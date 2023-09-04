@@ -48,7 +48,7 @@ func Login(info models.Auth) (*models.LoginResponse, *models.ErrorResponse) {
 }
 
 func Register(info models.Register) *models.ErrorResponse {
-	newUser := model.User{Email: info.Username, Fullname: info.FullName, Password: info.Password}
+	newUser := model.User{Email: info.Username, FullName: info.FullName, Password: info.Password}
 
 	if err := newUser.HashPassword(newUser.Password); err != nil {
 		log.Println(err.Error())

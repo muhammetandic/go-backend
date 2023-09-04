@@ -6,16 +6,16 @@ import (
 
 type User struct {
 	Model
-	Email        string `json:"email" gorm:"unique; size:100" binding:"required"`
-	Password     string `json:"password" gorm:"size:100" binding:"required"`
-	Fullname     string `json:"fullname" gorm:"size:200" binding:"required"`
-	RefreshToken string `json:"refreshToken"`
-	Roles        []UserToRole
+	Email        string       `json:"email" gorm:"uniqueIndex;size:100" binding:"required"`
+	Password     string       `json:"-" gorm:"size:100"`
+	FullName     string       `json:"fullName" gorm:"size:200" binding:"required"`
+	RefreshToken string       `json:"refreshToken"`
+	Roles        []UserToRole `json:"roles" binding:"-"`
 }
 
 type UserDto struct {
 	Email    string `json:"email" binding:"required"`
-	Fullname string `json:"fullname" binding:"required"`
+	FullName string `json:"fullName" binding:"required"`
 }
 
 func (user *User) HashPassword(password string) error {

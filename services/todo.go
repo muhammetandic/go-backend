@@ -10,5 +10,5 @@ type TodoService struct {
 }
 
 func NewTodoService() *TodoService {
-	return &TodoService{NewService[model.Todo](repository.NewTodoRepo().Repository)}
+	return &TodoService{NewService[model.Todo](repository.NewTodoRepo())}
 }
