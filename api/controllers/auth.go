@@ -3,61 +3,55 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v4"
 
 	"github.com/muhammetandic/go-backend/main/core/models"
 	"github.com/muhammetandic/go-backend/main/services"
 	"github.com/muhammetandic/go-backend/main/utils/helpers"
 )
 
-func Login(c *gin.Context) {
+func Login(c echo.Context) error {
 	var auth models.Auth
 
-	if err := c.ShouldBindJSON(&auth); err != nil {
+	if err := c.Bind(&auth); err != nil {
 		errResponse := helpers.StatusInvalidated(err.Error())
-		c.JSON(http.StatusBadRequest, errResponse)
-		return
+		return c.JSON(http.StatusBadRequest, errResponse)
 	}
 
 	response, errResponse := services.Login(auth)
 	if errResponse != nil {
-		c.JSON(http.StatusUnauthorized, errResponse)
-		return
+		return c.JSON(http.StatusUnauthorized, errResponse)
 	}
 
-	c.JSON(http.StatusOK, response)
+	return c.JSON(http.StatusOK, response)
 }
 
-func Register(c *gin.Context) {
+func Register(c echo.Context) error {
 	var register models.Register
 
-	if err := c.ShouldBindJSON(&register); err != nil {
+	if err := c.Bind(&register); err != nil {
 		errResponse := helpers.StatusInvalidated(err.Error())
-		c.JSON(http.StatusBadRequest, errResponse)
-		return
+		return c.JSON(http.StatusBadRequest, errResponse)
 	}
 
 	if errResponse := services.Register(register); errResponse != nil {
-		c.JSON(http.StatusInternalServerError, errResponse)
-		return
+		return c.JSON(http.StatusInternalServerError, errResponse)
 	}
 
-	c.JSON(http.StatusNoContent, nil)
+	return c.JSON(http.StatusNoContent, nil)
 }
 
-func RefreshToken(c *gin.Context) {
+func RefreshToken(c echo.Context) error {
 	var token models.RefreshToken
 
-	if err := c.ShouldBindJSON(&token); err != nil {
+	if err := c.Bind(&token); err != nil {
 		errResponse := helpers.StatusInvalidated(err.Error())
-		c.JSON(http.StatusBadRequest, errResponse)
-		return
+		return c.JSON(http.StatusBadRequest, errResponse)
 	}
 
 	tokens, errResponse := services.RefreshToken(token.RefreshToken)
 	if errResponse != nil {
-		c.JSON(http.StatusUnauthorized, errResponse)
-		return
+		return c.JSON(http.StatusUnauthorized, errResponse)
 	}
-	c.JSON(http.StatusOK, tokens)
+	return c.JSON(http.StatusOK, tokens)
 }
