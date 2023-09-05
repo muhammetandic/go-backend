@@ -9,8 +9,8 @@ type Role struct {
 
 type UserToRole struct {
 	Model
-	UserID int  `json:"userId" binding:"required"`
-	RoleID int  `json:"roleId" binding:"required"`
+	UserID int  `json:"userId" gorm:"uniqueIndex" binding:"required"`
+	RoleID int  `json:"roleId" gorm:"uniqueIndex" binding:"required"`
 	Role   Role `json:"role" binding:"-"`
 	User   User `json:"user" binding:"-"`
 }

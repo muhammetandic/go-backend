@@ -40,5 +40,12 @@ func Routes(router *gin.Engine) {
 	role.PUT("/:id", controllers.UpdateRole)
 	role.DELETE("/:id", controllers.DeleteRole)
 
+	privilege := api.Group("privileges", middleware.Authenticate, middleware.Authorize)
+	privilege.POST("", controllers.CreatePrivilege)
+	privilege.GET("", controllers.GetAllPrivileges)
+	privilege.GET("/:id", controllers.GetPrivilege)
+	privilege.PUT("/:id", controllers.UpdatePrivilege)
+	privilege.DELETE("/:id", controllers.DeletePrivilege)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
