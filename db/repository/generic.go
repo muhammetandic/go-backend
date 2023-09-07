@@ -91,7 +91,7 @@ func (r *Repository[T]) Update(id int, entity *T, ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	return r.db.WithContext(ctx).Model(&entity).Updates(&entity).Error
+	return r.db.WithContext(ctx).Save(&entity).Error
 }
 
 func (r *Repository[T]) UpdateAll(entities []*T, ctx context.Context) error {

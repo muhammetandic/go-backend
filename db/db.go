@@ -1,6 +1,7 @@
 package db
 
 import (
+	"errors"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -30,6 +31,12 @@ func Migrate() {
 	if err != nil {
 		log.Println("database migration is failed")
 	}
+	if Instance.Migrator().HasTable(&model.User{}) {
+		if err := Instance.First(&model.User{}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+			Create()
+			log.Println("default values created")
+		}
+	}
 	log.Println("database migration completed")
 }
 
@@ -50,6 +57,7 @@ func Create() {
 		{RoleID: 1, Endpoint: "users", CanRead: true, CanInsert: true, CanUpdate: true, CanDelete: true},
 		{RoleID: 1, Endpoint: "roles", CanRead: true, CanInsert: true, CanUpdate: true, CanDelete: true},
 		{RoleID: 1, Endpoint: "todos", CanRead: true, CanInsert: true, CanUpdate: true, CanDelete: true},
+		{RoleID: 1, Endpoint: "privileges", CanRead: true, CanInsert: true, CanUpdate: true, CanDelete: true},
 	}
 	Instance.Create(privileges)
 }
