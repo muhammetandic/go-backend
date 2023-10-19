@@ -15,8 +15,12 @@ var (
 	dbError  error
 )
 
-func Connect() {
-	Instance, dbError = gorm.Open(sqlite.Open("./antpos.db"), &gorm.Config{})
+func Connect(connectionStrings ...string) {
+	if len(connectionStrings) > 0 {
+		Instance, dbError = gorm.Open(sqlite.Open(connectionStrings[0]), &gorm.Config{})
+	} else {
+		Instance, dbError = gorm.Open(sqlite.Open("./antpos.db"), &gorm.Config{})
+	}
 
 	if dbError != nil {
 		log.Fatal(dbError)
