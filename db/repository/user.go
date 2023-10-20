@@ -12,7 +12,7 @@ type UserRepo struct {
 }
 
 func NewUserRepo() *UserRepo {
-	return &UserRepo{NewRepository[model.User](db.Instance)}
+	return &UserRepo{(NewRepository[model.User](db.Instance)).CreateRepository(context.Background())}
 }
 
 func (r *UserRepo) GetAll(ctx context.Context) (*[]model.User, error) {

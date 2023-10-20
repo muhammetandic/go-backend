@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/muhammetandic/go-backend/main/db"
 	"github.com/muhammetandic/go-backend/main/db/model"
 )
@@ -10,5 +12,5 @@ type TodoRepo struct {
 }
 
 func NewTodoRepo() *TodoRepo {
-	return &TodoRepo{NewRepository[model.Todo](db.Instance)}
+	return &TodoRepo{(NewRepository[model.Todo](db.Instance)).CreateRepository(context.Background())}
 }
