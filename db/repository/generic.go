@@ -7,6 +7,7 @@ import (
 )
 
 type IRepository[T any] interface {
+	CreateRepository(ctx context.Context) *Repository[T]
 	Add(entity *T, ctx context.Context) (*T, error)
 	AddAll(entities []*T, ctx context.Context) error
 	GetAll(ctx context.Context) (*[]T, error)
@@ -22,9 +23,15 @@ type Repository[T any] struct {
 	db *gorm.DB
 }
 
-func NewRepository[T any](db *gorm.DB) *Repository[T] {
+func NewRepository[T any](db *gorm.DB) IRepository[T] {
 	return &Repository[T]{
 		db: db,
+	}
+}
+
+func (f *Repository[T]) CreateRepository(ctx context.Context) *Repository[T] {
+	return &Repository[T]{
+		db: f.db.WithContext(ctx),
 	}
 }
 

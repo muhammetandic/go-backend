@@ -10,6 +10,13 @@ import (
 	"github.com/muhammetandic/go-backend/main/core/models"
 )
 
+const (
+	issuer                 = "antpos"
+	subject                = "auth"
+	expiresAtThirtyMinutes = time.Minute * 30
+	expiresAtSixMonths     = time.Hour * 24 * 180
+)
+
 type UserDetails struct {
 	Username string `json:"username"`
 	FullName string `json:"full_name"`
@@ -25,30 +32,30 @@ func GenerateTokens(username string) (*models.LoginResponse, error) {
 	claims := &UserDetails{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "antpos",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(time.Minute * 30)),
-			Subject:   "auth",
+			Issuer:    issuer,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(expiresAtThirtyMinutes)),
+			Subject:   subject,
 		},
 	}
 
 	refreshClaims := &UserDetails{
 		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "antpos",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(time.Hour * 24 * 180)),
-			Subject:   "auth",
+			Issuer:    issuer,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Local().Add(expiresAtSixMonths)),
+			Subject:   subject,
 		},
 	}
 
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(secretKey)
 	if err != nil {
-		message := fmt.Errorf("something went wrong: %s", err.Error())
+		message := fmt.Errorf("failed to generate access token: %s", err.Error())
 		return nil, message
 	}
 
 	refreshToken, err := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims).SignedString(secretKey)
 	if err != nil {
-		message := fmt.Errorf("something went wrong: %s", err.Error())
+		message := fmt.Errorf("failed to generate refresh token: %s", err.Error())
 		return nil, message
 	}
 
