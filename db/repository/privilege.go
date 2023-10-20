@@ -12,5 +12,7 @@ type PrivilegeRepo struct {
 }
 
 func NewPrivilegeRepo() *PrivilegeRepo {
-	return &PrivilegeRepo{(NewRepository[model.Privilege](db.Instance)).CreateRepository(context.Background())}
+	repo := NewRepository[model.Privilege](db.Instance)
+	repository := repo.CreateRepository(context.Background())
+	return &PrivilegeRepo{repository}
 }

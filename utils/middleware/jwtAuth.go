@@ -1,13 +1,11 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 	"regexp"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/exp/slices"
 
 	"github.com/muhammetandic/go-backend/main/db/model"
 	"github.com/muhammetandic/go-backend/main/db/repository"
@@ -19,7 +17,7 @@ func Authenticate(c *gin.Context) {
 	auth := c.Request.Header.Get("Authorization")
 	if auth == "" {
 		errorResponse := helpers.StatusUnauthorized("no authorization header provided")
-		c.AbortWithStatusJSON(http.StatusForbidden, errorResponse)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse)
 		return
 	}
 
@@ -45,14 +43,14 @@ func Authorize(c *gin.Context) {
 	method := c.Request.Method
 
 	path := c.FullPath()
-	path = strings.Replace(path, "/api/", "", -1)
+	path = strings.TrimPrefix(path, "/api/")
 	pattern := `\/.*`
 	regEx := regexp.MustCompile(pattern)
 	path = regEx.ReplaceAllString(path, "")
 
 	username, _ := c.Get("username")
 
-	ctx := context.Background()
+	ctx := c.Request.Context()
 
 	userRepo := repository.NewUserRepo()
 	uname, _ := username.(string)
@@ -67,32 +65,29 @@ func Authorize(c *gin.Context) {
 }
 
 func CanDo(method string, path string, roles []model.UserToRole) bool {
-	switch method {
-	case "GET":
-		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
-				return privilege.Endpoint == path && privilege.CanRead
-			})
-		})
-	case "POST":
-		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
-				return privilege.Endpoint == path && privilege.CanInsert
-			})
-		})
-	case "PUT":
-		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
-				return privilege.Endpoint == path && privilege.CanUpdate
-			})
-		})
-	case "DELETE":
-		return slices.ContainsFunc(roles, func(role model.UserToRole) bool {
-			return slices.ContainsFunc(role.Role.Privileges, func(privilege model.Privilege) bool {
-				return privilege.Endpoint == path && privilege.CanDelete
-			})
-		})
-	default:
-		return false
+	for _, role := range roles {
+		for _, privilege := range role.Role.Privileges {
+			if privilege.Endpoint == path {
+				switch method {
+				case "GET":
+					if privilege.CanRead {
+						return true
+					}
+				case "POST":
+					if privilege.CanInsert {
+						return true
+					}
+				case "PUT":
+					if privilege.CanUpdate {
+						return true
+					}
+				case "DELETE":
+					if privilege.CanDelete {
+						return true
+					}
+				}
+			}
+		}
 	}
+	return false
 }

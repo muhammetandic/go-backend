@@ -12,5 +12,7 @@ type TodoRepo struct {
 }
 
 func NewTodoRepo() *TodoRepo {
-	return &TodoRepo{(NewRepository[model.Todo](db.Instance)).CreateRepository(context.Background())}
+	repo := NewRepository[model.Todo](db.Instance)
+	repository := repo.CreateRepository(context.Background())
+	return &TodoRepo{repository}
 }

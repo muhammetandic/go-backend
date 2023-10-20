@@ -12,7 +12,9 @@ type RoleRepo struct {
 }
 
 func NewRoleRepo() *RoleRepo {
-	return &RoleRepo{NewRepository[model.Role](db.Instance).CreateRepository(context.Background())}
+	repo := NewRepository[model.Role](db.Instance)
+	repository := repo.CreateRepository(context.Background())
+	return &RoleRepo{repository}
 }
 
 func (r *RoleRepo) GetAll(ctx context.Context) (*[]model.Role, error) {
