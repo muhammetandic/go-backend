@@ -25,6 +25,7 @@ import (
 func main() {
 	db.Connect()
 	db.Migrate()
+	db.SeedDatabase()
 
 	router := gin.Default()
 
